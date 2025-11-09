@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import ModalRegisterPatient from "@/components/modals/modal-register-patient";
 import {
   ColumnDef,
   flexRender,
@@ -43,45 +44,46 @@ type Paciente = {
 export default function PacientesPage() {
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [totalPacientes, setTotalPacientes] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchPacientes = async () => {
+    const { data, error } = await supabase
+      .from("pacientes")
+      .select(`
+        id_paciente,
+        nombre,
+        edad,
+        sexo,
+        raza,
+        telefono,
+        dni,
+        estado_civil,
+        lugar_nacimiento,
+        fecha_nacimiento,
+        grado_instruccion,
+        domicilio_actual,
+        lugar_procedencia,
+        tiempo_procedencia,
+        tipo_seguro,
+        persona_responsable,
+        celular_responsable,
+        dni_responsable,
+        direccion_responsable
+      `)
+      .limit(10);
+
+    // Obtener el total de pacientes
+    const { count } = await supabase
+      .from("pacientes")
+      .select("*", { count: "exact", head: true });
+
+    if (!error && data) {
+      setPacientes(data);
+      setTotalPacientes(count || 0);
+    }
+  };
 
   useEffect(() => {
-    const fetchPacientes = async () => {
-      const { data, error } = await supabase
-        .from("pacientes")
-        .select(`
-          id_paciente,
-          nombre,
-          edad,
-          sexo,
-          raza,
-          telefono,
-          dni,
-          estado_civil,
-          lugar_nacimiento,
-          fecha_nacimiento,
-          grado_instruccion,
-          domicilio_actual,
-          lugar_procedencia,
-          tiempo_procedencia,
-          tipo_seguro,
-          persona_responsable,
-          celular_responsable,
-          dni_responsable,
-          direccion_responsable
-        `)
-        .limit(10);
-
-      // Obtener el total de pacientes
-      const { count } = await supabase
-        .from("pacientes")
-        .select("*", { count: "exact", head: true });
-
-      if (!error && data) {
-        setPacientes(data);
-        setTotalPacientes(count || 0);
-      }
-    };
-
     fetchPacientes();
   }, []);
 
@@ -216,7 +218,10 @@ export default function PacientesPage() {
             Administra la información de los pacientes
           </p>
         </div>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
+        >
           + Nuevo Paciente
         </button>
       </div>
@@ -352,6 +357,15 @@ export default function PacientesPage() {
           </div>
         ))}
       </div>
+
+      {/* Modal de registro */}
+      <ModalRegisterPatient
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={() => {
+          fetchPacientes(); // Recargar la lista
+        }}
+      />
     </div>
   );
 }
