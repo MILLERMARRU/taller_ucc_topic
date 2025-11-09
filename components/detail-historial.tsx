@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Calendar, Phone, MapPin, FileText, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, Phone, MapPin, FileText, ChevronDown, ChevronUp, Plus } from "lucide-react";
+import ExportPdfButton from "@/components/export-pdf-button";
+import ExportWordButton from "@/components/export-word-button";
+import { useRouter } from "next/navigation";
 
 export type DetailHistorialProps = {
   pacienteId: number;
@@ -60,6 +63,8 @@ function Pill({ children, tone = "default" }: { children: React.ReactNode; tone?
 }
 
 export default function DetailHistorial({ pacienteId }: DetailHistorialProps) {
+  const router = useRouter();
+  const printableRef = useRef<HTMLDivElement>(null);
   const [paciente, setPaciente] = useState<Paciente | null>(null);
   const [antecedentes, setAntecedentes] = useState<Antecedentes | null>(null);
   const [consultas, setConsultas] = useState<Consulta[]>([]);
@@ -143,16 +148,26 @@ export default function DetailHistorial({ pacienteId }: DetailHistorialProps) {
     : [];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6" ref={printableRef}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Historial Clínico</h1>
-          <p className="text-gray-600">Detalle de consultas del paciente</p>
+          <p className="text-gray-600">{paciente?.nombre}</p>
         </div>
-        <Pill>
-          <FileText size={14} className="mr-1" /> {consultas.length} consulta{consultas.length !== 1 ? "s" : ""}
-        </Pill>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push(`/admin/consultas/nueva/${pacienteId}`)}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            <Plus size={16} /> Nueva Consulta
+          </button>
+          <ExportPdfButton pacienteId={pacienteId} fileName={`historial_${paciente?.dni || pacienteId}.pdf`} />
+          <ExportWordButton
+            pacienteId={pacienteId}
+            fileName={`historial_${paciente?.dni || pacienteId}.docx`}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
