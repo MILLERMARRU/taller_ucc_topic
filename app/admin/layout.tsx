@@ -7,7 +7,7 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  //useAutoLogout();
+  useAutoLogout();
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />

@@ -325,7 +325,10 @@ export default function PacientesPage() {
             <Plus size={14} />
             Nueva Consulta
           </button>
-          <button className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-xs font-medium">
+          <button
+            onClick={() => router.push(`/admin/historiales/histo/${row.original.id_paciente}`)}
+            className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-xs font-medium"
+          >
             <FileText size={14} />
             Ver Historial
           </button>
@@ -705,7 +708,10 @@ export default function PacientesPage() {
                     <Plus size={16} />
                     Nueva Consulta
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-sm font-medium">
+                  <button
+                    onClick={() => router.push(`/admin/historiales/histo/${p.id_paciente}`)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-sm font-medium"
+                  >
                     <FileText size={16} />
                     Ver Historial
                   </button>
