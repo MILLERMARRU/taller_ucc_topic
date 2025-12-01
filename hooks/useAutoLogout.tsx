@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export function useAutoLogout(timeoutMs = 1 * 60 * 1000) { 
+export function useAutoLogout(timeoutMs = 5 * 60 * 1000) { 
   const router = useRouter();
 
   useEffect(() => {
